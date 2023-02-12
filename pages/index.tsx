@@ -10,6 +10,9 @@ export default function Home() {
       <div>
         <Link href="/about">Contact us</Link>
       </div>
+      <div>
+        <Link href="/game">Game</Link>
+      </div>
     </>
   );
 }
