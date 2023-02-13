@@ -29,14 +29,14 @@ const Board = () => {
     newSquares[i] = xIsNext ? "X" : "O";
     setSquares(newSquares);
     setXIsNext(!xIsNext);
-    let status;
-    const winner = calculateWinner(squares);
-    status = winner
-      ? `the winner is ${winner}`
-      : `Next player -> ${xIsNext ? "X" : "O"}`;
   }
 
-  const status = calculateWinner(squares);
+  let status;
+  const winner = calculateWinner(squares);
+  status = winner
+    ? `the winner is ${winner}`
+    : `Next player -> ${xIsNext ? "X" : "O"}`;
+
   return (
     <div>
       <div className={styles.status}>{status}</div>
@@ -61,8 +61,9 @@ const Board = () => {
 
 export default function Game() {
   return (
-    <div className={styles.game}>
+    <div className={`${styles.game} container mt-3`}>
       <div className={styles.gameBoard}>
+        <p className="h3">TIC TAC TOE</p>
         <Board />
       </div>
       <div className={styles.gameinfo}>
