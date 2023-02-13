@@ -16,7 +16,7 @@ const Square = ({ value, onSquareClick }: SquareProps) => {
 
   return (
     <button className={styles.square} onClick={onSquareClick}>
-      {value}
+      {value === "X" ? "❌" : value === "O" ? "⭕" : null}
     </button>
   );
 };
