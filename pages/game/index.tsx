@@ -1,10 +1,14 @@
-import Link from "next/link";
 import styles from "./game.module.css";
 import { useState } from "react";
 
-const Square = ({ value, onSquareClick }) => {
-  const [count, setCount] = useState<number>(0);
+type Symbol = "X" | "O" | null;
 
+type SquareProps = {
+  value: Symbol;
+  onSquareClick: () => void;
+};
+
+const Square = ({ value, onSquareClick }: SquareProps) => {
   function handleClick() {
     onSquareClick();
   }
@@ -18,10 +22,10 @@ const Square = ({ value, onSquareClick }) => {
 };
 
 const Board = () => {
-  const [squares, setSquares] = useState(Array(9).fill(null));
+  const [squares, setSquares] = useState<Symbol[]>(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
 
-  function handleClick(i) {
+  function handleClick(i: number) {
     if (squares[i] || calculateWinner(squares)) {
       return;
     }
@@ -74,7 +78,7 @@ export default function Game() {
   );
 }
 
-function calculateWinner(squares) {
+function calculateWinner(squares: Symbol[]) {
   const winningLines = [
     [0, 1, 2],
     [3, 4, 5],
