@@ -7,8 +7,13 @@ type SquareProps = {
   value: Symbol;
   onSquareClick: () => void;
 };
+type BoardProps = {
+  xIsNext: Boolean;
+  squares: any;
+  onPlay: () => void;
+};
 
-const Square = ({ value, onSquareClick }: SquareProps) => {
+function Square({ value, onSquareClick }: SquareProps) {
   function handleClick() {
     onSquareClick();
   }
@@ -19,25 +24,16 @@ const Square = ({ value, onSquareClick }: SquareProps) => {
       {value === "X" ? "❌" : value === "O" ? "⭕" : null}
     </button>
   );
-};
+}
 
-const Board = () => {
-  const [squares, setSquares] = useState<Symbol[]>(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
-
+const Board = ({ xIsNext, squares, onPlay }: BoardProps) => {
   function handleClick(i: number) {
     if (squares[i] || calculateWinner(squares)) {
       return;
     }
     const newSquares = squares.slice();
     newSquares[i] = xIsNext ? "X" : "O";
-    setSquares(newSquares);
-    setXIsNext(!xIsNext);
-  }
-
-  function resetGame() {
-    setSquares(Array(9).fill(null));
-    setXIsNext(true);
+    onPlay(newSquares);
   }
 
   let status;
@@ -64,27 +60,65 @@ const Board = () => {
         <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
-      <button
-        type="button"
-        className="btn btn-primary mt-3"
-        onClick={resetGame}
-      >
-        Reset Game
-      </button>
     </div>
   );
 };
 
 export default function Game() {
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  // const [xIsNext, setXIsNext] = useState(true);
+  const [currentMove, setCurrentMove] = useState(0);
+  const xIsNext = currentMove % 2 == 0;
+  const currentSquares = history[currentMove];
+
+  function handlePlay(nextSquares) {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
+  }
+
+  function resetGame() {
+    setHistory([Array(9).fill(null)]);
+    setCurrentMove(0);
+  }
+
+  function jumpTo(nextMove) {
+    console.log(nextMove + "utsav");
+    setCurrentMove(nextMove);
+  }
+
+  let moves = history.map((squares, move) => {
+    let description = move ? `Go to move #${move}` : "Go to Game start";
+
+    return (
+      <li
+        className="list-group-item"
+        onClick={() => {
+          jumpTo(move);
+        }}
+        key={move}
+      >
+        {description}
+      </li>
+    );
+  });
+
   return (
     <div className={`${styles.game} container mt-3`}>
       <div className={styles.gameBoard}>
         <p className="h3">TIC TAC TOE</p>
-        <Board />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <button
+          type="button"
+          className="btn btn-primary mt-3"
+          onClick={resetGame}
+        >
+          Reset Game
+        </button>
       </div>
       <div className={styles.gameinfo}>
         <div>{/* status */}</div>
-        <ol className={styles.lists}>{/* TODO */}</ol>
+        <ol className={`${styles.lists} list-group`}>{moves}</ol>
       </div>
     </div>
   );
