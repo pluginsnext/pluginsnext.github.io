@@ -10,18 +10,22 @@ type SquareProps = {
 type BoardProps = {
   xIsNext: Boolean;
   squares: any;
-  onPlay: () => void;
+  onPlay: (nextSquares: Symbol[]) => void;
 };
 
 function Square({ value, onSquareClick }: SquareProps) {
   function handleClick() {
     onSquareClick();
   }
-  console.log("square triggered");
+
+  const symbolMap = {
+    X: "❌",
+    O: "⭕",
+  };
 
   return (
     <button className={styles.square} onClick={onSquareClick}>
-      {value === "X" ? "❌" : value === "O" ? "⭕" : null}
+      {value ? symbolMap[value] : value}
     </button>
   );
 }
@@ -71,7 +75,7 @@ export default function Game() {
   const xIsNext = currentMove % 2 == 0;
   const currentSquares = history[currentMove];
 
-  function handlePlay(nextSquares) {
+  function handlePlay(nextSquares: Symbol[]) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
@@ -82,8 +86,7 @@ export default function Game() {
     setCurrentMove(0);
   }
 
-  function jumpTo(nextMove) {
-    console.log(nextMove + "utsav");
+  function jumpTo(nextMove: number) {
     setCurrentMove(nextMove);
   }
 
@@ -93,9 +96,8 @@ export default function Game() {
     return (
       <li
         className="list-group-item"
-        onClick={() => {
-          jumpTo(move);
-        }}
+        onClick={() => jumpTo(move)}
+        onMouseEnter={() => jumpTo(move)}
         key={move}
       >
         {description}
