@@ -1,5 +1,4 @@
 import { FormEvent, useState } from "react";
-import { getId } from "./utils";
 
 type OnAdd = (url: string) => void;
 
@@ -109,6 +108,11 @@ export function HeaderComponent() {
     </nav>
   );
 }
+
+const getId = (_url: string): string => {
+  const url = _url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+  return url[2] !== undefined ? url[2].split(/[^0-9a-z_\-]/i)[0] : url[0];
+};
 
 export default function Youtube() {
   const [activeIndex, setActiveIndex] = useState<number>(0);
