@@ -14,7 +14,7 @@ export default function Home() {
         <Link href="/game">Game</Link>
       </div>
       <div>
-        <Link href="/youtube">Youtube</Link>
+        <Link href="/playlist">Playlist</Link>
       </div>
     </>
   );
