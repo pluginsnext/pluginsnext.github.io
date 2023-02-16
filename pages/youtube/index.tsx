@@ -47,6 +47,23 @@ export function Video(videoLink) {
   );
 }
 
+export function HeaderComponent() {
+  return (
+    <nav className="navbar navbar-dark bg-dark mb-5 p-3 shadow-sm">
+      <div className="container-fluid">
+        <a href="/">
+          <strong className="navbar-brand">
+            Enter url to update the Playlist
+          </strong>
+        </a>
+        <div className="d-flex">
+          <button className="btn btn-outline-warning">Open youtube</button>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
 export default function Youtube() {
   const [userInput, setUserInput] = useState<string>("");
   const [videoLink, setVideoLink] = useState<string>("");
@@ -72,7 +89,8 @@ export default function Youtube() {
   return (
     <div className="container row">
       <div className="col-md-6">
-        <p className="h3 mt-3 mb-3">Enter url to update the Playlist</p>
+        {/* <p className="h3 mt-3 mb-3">Enter url to update the Playlist</p> */}
+        <HeaderComponent />
         <UserInput
           handleChange={onInputChange}
           handleSubmit={onInputSubmit}
