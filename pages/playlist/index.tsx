@@ -117,9 +117,36 @@ const getId = (_url: string): string => {
 export default function Youtube() {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [playlist, setPlaylist] = useState<string[]>([]);
+  const [searchParam, setSearchParam] = useState<string[]>([]);
 
   const onAdd = (url: string) => {
     setPlaylist((playlist) => [...playlist, url]);
+  };
+
+  const onSearch = (param) => {
+    const yKey = "AIzaSyDzdd-cUkipk_gQJHKLIGD2LaD4T3TXFuM";
+    // const response = youtubeApi.get('/search').
+    const url = "https://www.googleapis.com/youtube/v3/search";
+
+    fetch(
+      url +
+        new URLSearchParams({
+          part: ["snippet"],
+          maxResults: 10,
+          q: param,
+          key: yKey,
+        })
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const onChange = (e: FormEvent<HTMLInputElement>) => {
+    setSearchParam(e.currentTarget.value);
+    onSearch(e.currentTarget.value);
   };
 
   return (
@@ -134,6 +161,8 @@ export default function Youtube() {
               setActiveIndex={setActiveIndex}
             />
             <UserInput onAdd={onAdd} />
+            <input value={searchParam} onChange={onChange} />
+            {searchParam}
           </div>
           {!!playlist[activeIndex] && (
             <div className="col-md-6">
