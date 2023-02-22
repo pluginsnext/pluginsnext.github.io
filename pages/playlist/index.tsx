@@ -133,10 +133,17 @@ export function SearchList({ searchList, onAdd }: SearchListProps) {
                 `https://www.youtube.com/embed/${item.id.videoId}?autoplay=1`
               )
             }
-            className="list-group-item}"
+            className="list-group-item"
           >
-            <div>{item.snippet.title}</div>
-            <img src={item.snippet.thumbnails.medium.url} />
+            <div className="row">
+              <div className="col-2">
+                <img
+                  className="img-fluid"
+                  src={item.snippet.thumbnails.medium.url}
+                />
+              </div>
+              <div className="col-10">{item.snippet.title}</div>
+            </div>
           </li>
         );
       })}
@@ -189,7 +196,6 @@ export default function Youtube() {
               setActiveIndex={setActiveIndex}
             />
             <UserInput onAdd={onAdd} onSearch={onSearch} />
-            {/* <input value={searchParam} onChange={onChange} /> */}
             {!!searchList.length && (
               <SearchList searchList={searchList} onAdd={onAdd} />
             )}
