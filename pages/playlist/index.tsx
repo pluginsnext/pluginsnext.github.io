@@ -4,13 +4,15 @@ type OnAdd = (url: string) => void;
 
 type UserInputProps = {
   onAdd: OnAdd;
+  onSearch: OnAdd;
 };
 
-export function UserInput({ onAdd }: UserInputProps) {
+export function UserInput({ onAdd, onSearch }: UserInputProps) {
   const [userInput, setUserInput] = useState<string>("");
 
   const onChange = (e: FormEvent<HTMLInputElement>) => {
     setUserInput(e.currentTarget.value);
+    onSearch(e.currentTarget.value);
   };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -109,6 +111,39 @@ export function HeaderComponent() {
   );
 }
 
+type itemObj = {
+  snippet: { title: string; thumbnails: { medium: { url: string } } };
+  id: { videoId: string };
+};
+
+type SearchListProps = {
+  searchList: [];
+  onAdd: OnAdd;
+};
+
+export function SearchList({ searchList, onAdd }: SearchListProps) {
+  return (
+    <ul className="list-group mb-5">
+      {searchList.map((item: itemObj, index: number) => {
+        return (
+          <li
+            key={index}
+            onClick={() =>
+              onAdd(
+                `https://www.youtube.com/embed/${item.id.videoId}?autoplay=1`
+              )
+            }
+            className="list-group-item}"
+          >
+            <div>{item.snippet.title}</div>
+            <img src={item.snippet.thumbnails.medium.url} />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 const getId = (_url: string): string => {
   const url = _url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
   return url[2] !== undefined ? url[2].split(/[^0-9a-z_\-]/i)[0] : url[0];
@@ -117,7 +152,7 @@ const getId = (_url: string): string => {
 export default function Youtube() {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [playlist, setPlaylist] = useState<string[]>([]);
-  const [searchParam, setSearchParam] = useState<string>("");
+  const [searchList, setSearchList] = useState<[]>([]);
 
   const onAdd = (url: string) => {
     setPlaylist((playlist) => [...playlist, url]);
@@ -128,22 +163,19 @@ export default function Youtube() {
     // const response = youtubeApi.get('/search').
     const url = `https://www.googleapis.com/youtube/v3/search?key=${yKey}&part=snippet&maxResults=10&q=${param}`;
 
-    fetch(url, {
-      headers: {
-        Authorization: `Bearer ${yKey}`,
-      },
-    })
+    fetch(url)
       .then((response) => response.json())
       .then((json) => {
         console.log(json);
+        setSearchList(json.items);
       })
       .catch((error) => console.log(error));
   };
 
-  const onChange = (e: FormEvent<HTMLInputElement>) => {
-    setSearchParam(e.currentTarget.value);
-    onSearch(e.currentTarget.value);
-  };
+  // const onChange = (e: FormEvent<HTMLInputElement>) => {
+  //   setSearchParam(e.currentTarget.value);
+  //   onSearch(e.currentTarget.value);
+  // };
 
   return (
     <>
@@ -156,9 +188,11 @@ export default function Youtube() {
               activeIndex={activeIndex}
               setActiveIndex={setActiveIndex}
             />
-            <UserInput onAdd={onAdd} />
-            <input value={searchParam} onChange={onChange} />
-            {searchParam}
+            <UserInput onAdd={onAdd} onSearch={onSearch} />
+            {/* <input value={searchParam} onChange={onChange} /> */}
+            {!!searchList.length && (
+              <SearchList searchList={searchList} onAdd={onAdd} />
+            )}
           </div>
           {!!playlist[activeIndex] && (
             <div className="col-md-6">
